@@ -77,8 +77,6 @@ const StocksPage = () => {
     { timestamp: "2021-03-03 19:05:00", total_volumn: 312, min_price: 121.9400, max_price: 122.0000, opening_price: 121.9400, closing_price: 122.0000 },
   ]);
 
-  const [dateRange, setDateRange] = useState([new Date(), new Date()]);
-
   return (
     <div className="ag-theme-alpine" style={{ height: 600, width: 1200 }}>
       <Autocomplete
