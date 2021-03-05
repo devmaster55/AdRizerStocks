@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -69,6 +69,16 @@ const bestMatches = [
 ]
 
 const StocksPage = () => {
+  useEffect(() => {
+    const headers = { 'Content-Type': 'application/json' };
+    fetch('http://127.0.0.1:3001/lookForSymbol/', { headers })
+    // fetch('http://127.0.0.1:3001/lookForSymbol/', { headers })
+      .then(response => response.json())
+      .then(data => {
+        console.log('data', data)
+      });
+	}, [])
+
   const [rowData, setRowData] = useState([
     { timestamp: "2021-03-03 20:00:00", total_volumn: 3611, min_price: 121.9400, max_price: 122.0000, opening_price: 121.9400, closing_price: 122.0000 },
     { timestamp: "2021-03-03 19:50:00", total_volumn: 855, min_price: 121.9400, max_price: 122.0000, opening_price: 121.9400, closing_price: 122.0000 },
