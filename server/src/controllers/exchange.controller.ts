@@ -73,6 +73,13 @@ export class ExchangeController {
   ): Promise<object> {
     const result = await this.alphavantageService.getTimeSeriesStock(function_choice, symbol, '5min');
 
+    let errorMessage = result['Error Message']
+    if (errorMessage != null) {
+      return {
+        errorMessage: errorMessage,
+      };
+    }
+
     let tempMetaData = result['Meta Data']
     let newMetaData:INewMetaData = {};
     for (const [key, value] of Object.entries(tempMetaData)) {
@@ -144,6 +151,14 @@ export class ExchangeController {
     @param.query.string('keywords') keywords: string,
   ): Promise<object> {
     const result = await this.alphavantageService.lookForSymbol('SYMBOL_SEARCH', keywords);
+
+    let errorMessage = result['Error Message']
+    if (errorMessage != null) {
+      return {
+        errorMessage: errorMessage,
+      };
+    }
+
     let newBestMatches = result.bestMatches.map((symbol) => {
       let temp:INewSymbolObject = { symbol: '', name: '' };
       for (const [key, value] of Object.entries(symbol)) {

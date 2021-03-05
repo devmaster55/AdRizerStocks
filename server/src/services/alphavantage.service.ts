@@ -4,6 +4,7 @@ import {AlphavantageDataSource} from '../datasources';
 
 interface ISymbol {
   bestMatches: Array<object>;
+  'Error Message'?: string,
 }
 
 interface ITimeSeriesElement {
@@ -17,6 +18,7 @@ interface ITimeSeriesElement {
 interface ITimeSeriesStock {
   'Meta Data': object,
   'Time Series (5min)'?: { string: object },
+  'Error Message'?: string, //'Error Message': 'Invalid API call. Please retry or visit the documentation (https://www.alphavantage.co/documentation/) for TIME_SERIES_INTRADAY.'
 }
 
 export interface AlphavantageService {

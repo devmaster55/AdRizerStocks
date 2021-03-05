@@ -10,87 +10,116 @@ import { DatePicker } from 'antd';
 import 'antd/dist/antd.css';
 const { RangePicker } = DatePicker;
 
-const bestMatches = [
-  {
-      symbol: "BA",
-      name: "Boeing Company",
-      type: "Equity",
-      region: "United States",
-      marketOpen: "09:30",
-      marketClose: "16:00",
-      timezone: "UTC-05",
-      currency: "USD",
-      matchScore: "1.0000"
-  },
-  {
-      symbol: "BAA",
-      name: "Banro Corporation USA",
-      type: "Equity",
-      region: "United States",
-      marketOpen: "09:30",
-      marketClose: "16:00",
-      timezone: "UTC-05",
-      currency: "USD",
-      matchScore: "0.8000"
-  },
-  {
-      symbol: "BAB",
-      name: "Invesco Taxable Municipal Bond ETF",
-      type: "ETF",
-      region: "United States",
-      marketOpen: "09:30",
-      marketClose: "16:00",
-      timezone: "UTC-05",
-      currency: "USD",
-      matchScore: "0.8000"
-  },
-  {
-      symbol: "BA.LON",
-      name: "BAE Systems plc",
-      type: "Equity",
-      region: "United Kingdom",
-      marketOpen: "08:00",
-      marketClose: "16:30",
-      timezone: "UTC+00",
-      currency: "GBP",
-      matchScore: "0.6667"
-  },
-  {
-      symbol: "BABA",
-      name: "Alibaba Group Holding Ltd",
-      type: "Equity",
-      region: "United States",
-      marketOpen: "09:30",
-      marketClose: "16:00",
-      timezone: "UTC-05",
-      currency: "USD",
-      matchScore: "0.6667"
-  },
-]
+interface INewSymbolObject {
+  symbol: string,
+  name: string,
+}
+
+interface INewTimeSeriesElement {
+  timestamp?: string,
+  total_volumn?: string,
+  min_price?: string,
+  max_price?: string,
+  opening_price?: string,
+  closing_price?: string,
+}
 
 const StocksPage = () => {
-  let function_choice = 'TIME_SERIES_INTRADAY'
-  let symbol = 'IBM'
-  let keywords = 'IBM'
+  const [selectedValue, setSelectedValue] = useState<INewSymbolObject>({ symbol: '', name: '' });
+  const [inputValue, setInputValue] = useState('');
+  const [symbolsList, setSymbolsList] = useState<Array<INewSymbolObject>>([]);
+  const [timeSeriesStock, setTimeSeriesStock] = useState<Array<INewTimeSeriesElement>>([]);
+
   useEffect(() => {
+    let function_choice = 'TIME_SERIES_INTRADAY'
+    let symbol = 'IBM'
     const headers = { 'Content-Type': 'application/json' };
-    // const query = `?function_choice=${function_choice}&symbol=${symbol}`
-    const query = `?keywords=${keywords}`
-    // fetch('http://127.0.0.1:3001/exchange/equity' + query, { headers })
-    fetch('http://127.0.0.1:3001/lookForSymbol' + query, { headers })
+    const query = `?function_choice=${function_choice}&symbol=${symbol}`
+    fetch('http://127.0.0.1:3001/exchange/equity' + query, { headers })
       .then(response => response.json())
       .then(data => {
         console.log('data', data)
       });
 	}, [])
 
-  const [rowData, setRowData] = useState([
-    { timestamp: "2021-03-03 20:00:00", total_volumn: 3611, min_price: 121.9400, max_price: 122.0000, opening_price: 121.9400, closing_price: 122.0000 },
-    { timestamp: "2021-03-03 19:50:00", total_volumn: 855, min_price: 121.9400, max_price: 122.0000, opening_price: 121.9400, closing_price: 122.0000 },
-    { timestamp: "2021-03-03 19:40:00", total_volumn: 216, min_price: 121.9400, max_price: 122.0000, opening_price: 121.9400, closing_price: 122.0000 },
-    { timestamp: "2021-03-03 19:25:00", total_volumn: 386, min_price: 121.9400, max_price: 122.0000, opening_price: 121.9400, closing_price: 122.0000 },
-    { timestamp: "2021-03-03 19:05:00", total_volumn: 312, min_price: 121.9400, max_price: 122.0000, opening_price: 121.9400, closing_price: 122.0000 },
-  ]);
+  // useEffect(() => {
+  //   let keywords = 'IB'
+  //   const headers = { 'Content-Type': 'application/json' };
+  //   const query = `?keywords=${keywords}`
+  //   fetch('http://127.0.0.1:3001/lookForSymbol' + query, { headers })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       console.log('data', data)
+  //     });
+	// }, [])
+
+  useEffect(() => {
+    let active = true;
+
+    if (inputValue === '') {
+      setSymbolsList([]);
+      setTimeSeriesStock([]);
+      return undefined;
+    }
+
+    const headers = { 'Content-Type': 'application/json' };
+    const query = `?keywords=${inputValue}`
+    fetch('http://127.0.0.1:3001/lookForSymbol' + query, { headers })
+      .then(response => response.json())
+      .then(data => {
+        if (data.errorMessage) {
+          setSymbolsList([]);
+        } else {
+          setSymbolsList(data);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [inputValue]);
+
+  useEffect(() => {
+    let active = true;
+
+    if (selectedValue === null || selectedValue.symbol === '') {
+      setSymbolsList([]);
+      setTimeSeriesStock([]);
+      return undefined;
+    }
+
+    let function_choice = 'TIME_SERIES_INTRADAY'
+    let symbol = selectedValue.symbol
+
+    const headers = { 'Content-Type': 'application/json' };
+    const query = `?function_choice=${function_choice}&symbol=${symbol}`
+    fetch('http://127.0.0.1:3001/exchange/equity' + query, { headers })
+      .then(response => response.json())
+      .then(data => {
+        if (data.errorMessage) {
+          setTimeSeriesStock([])
+        } else {
+          setTimeSeriesStock(data.time_series)
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [selectedValue]);
+
+  const handleOnChange = (newValue: string | INewSymbolObject) => {
+    console.log('change', newValue);
+    if (typeof newValue !== 'string') {
+      setSymbolsList(newValue ? [newValue, ...symbolsList] : symbolsList)
+      setSelectedValue(newValue);
+    }
+  }
+
+  const handleOnInputChange = (event: object, newValue: string) => {
+    console.log('new text', newValue);
+    setInputValue(newValue);
+  }
 
   return (
     <div className="ag-theme-alpine" style={{ height: 600, width: 1200 }}>
@@ -98,13 +127,15 @@ const StocksPage = () => {
         freeSolo
         id="free-solo-2-demo"
         style={{ width: 300 }}
-        disableClearable
-        options={bestMatches}
-        getOptionLabel={(option) => option.symbol}
+        options={symbolsList}
+        getOptionLabel={(option) => option.symbol!}
+        value={selectedValue}
+        onChange={(event, value) => handleOnChange(value!)}
+        onInputChange={handleOnInputChange}
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Search input"
+            label="Search symbol"
             margin="normal"
             variant="outlined"
             InputProps={{ ...params.InputProps, type: 'search' }}
@@ -128,7 +159,7 @@ const StocksPage = () => {
       />
       <RangePicker />
       <AgGridReact
-          rowData={rowData}>
+          rowData={timeSeriesStock}>
           <AgGridColumn headerName="Timestamp" field="timestamp"></AgGridColumn>
           <AgGridColumn headerName="Total Volume" field="total_volumn"></AgGridColumn>
           <AgGridColumn headerName="Min. Price" field="min_price"></AgGridColumn>
