@@ -122,42 +122,44 @@ const StocksPage = () => {
   }
 
   return (
-    <div className="ag-theme-alpine" style={{ height: 600, width: 1200 }}>
-      <Autocomplete
-        freeSolo
-        id="free-solo-2-demo"
-        style={{ width: 300 }}
-        options={symbolsList}
-        getOptionLabel={(option) => option.symbol!}
-        value={selectedValue}
-        onChange={(event, value) => handleOnChange(value!)}
-        onInputChange={handleOnInputChange}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Search symbol"
-            margin="normal"
-            variant="outlined"
-            InputProps={{ ...params.InputProps, type: 'search' }}
-          />
-        )}
-        renderOption={(option, { inputValue }) => {
-          // const matches = match(option.title, inputValue);
-          // const parts = parse(option.title, matches);
+    <div className="ag-theme-alpine" style={{ height: 600, width: 1200, margin: '0 auto' }}>
+      <div style={{ display: 'flex', paddingTop: 20, paddingBottom: 20 }}>
+        <Autocomplete
+          freeSolo
+          id="free-solo-2-demo"
+          style={{ width: 300 }}
+          options={symbolsList}
+          getOptionLabel={(option) => option.symbol!}
+          value={selectedValue}
+          onChange={(event, value) => handleOnChange(value!)}
+          onInputChange={handleOnInputChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search symbol"
+              variant="outlined"
+              InputProps={{ ...params.InputProps, type: 'search' }}
+            />
+          )}
+          renderOption={(option, { inputValue }) => {
+            // const matches = match(option.title, inputValue);
+            // const parts = parse(option.title, matches);
 
-          return (
-            <div>
-              {/* {parts.map((part, index) => (
-                <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
-                  {part.text}
-                </span>
-              ))} */}
-              {option.symbol} {option.name}
-            </div>
-          );
-        }}
-      />
-      <RangePicker />
+            return (
+              <div>
+                {/* {parts.map((part, index) => (
+                  <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
+                    {part.text}
+                  </span>
+                ))} */}
+                {option.symbol + ' => ' + option.name}
+              </div>
+            );
+          }}
+        />
+        <RangePicker style={{ marginLeft: 20 }}/>
+      </div>
+
       <AgGridReact
           rowData={timeSeriesStock}>
           <AgGridColumn headerName="Timestamp" field="timestamp"></AgGridColumn>
