@@ -69,10 +69,15 @@ const bestMatches = [
 ]
 
 const StocksPage = () => {
+  let function_choice = 'TIME_SERIES_INTRADAY'
+  let symbol = 'IBM'
+  let keywords = 'IBM'
   useEffect(() => {
     const headers = { 'Content-Type': 'application/json' };
-    fetch('http://127.0.0.1:3001/lookForSymbol/', { headers })
-    // fetch('http://127.0.0.1:3001/lookForSymbol/', { headers })
+    // const query = `?function_choice=${function_choice}&symbol=${symbol}`
+    const query = `?keywords=${keywords}`
+    // fetch('http://127.0.0.1:3001/exchange/equity' + query, { headers })
+    fetch('http://127.0.0.1:3001/lookForSymbol' + query, { headers })
       .then(response => response.json())
       .then(data => {
         console.log('data', data)

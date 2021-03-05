@@ -2,12 +2,29 @@ import {inject, Provider} from '@loopback/core';
 import {getService} from '@loopback/service-proxy';
 import {AlphavantageDataSource} from '../datasources';
 
+interface ISymbol {
+  bestMatches: Array<object>;
+}
+
+interface ITimeSeriesElement {
+  '1. open'?: string,
+  '2. high'?: string,
+  '3. low'?: string,
+  '4. close'?: string,
+  '5. volume'?: string,
+}
+
+interface ITimeSeriesStock {
+  'Meta Data': object,
+  'Time Series (5min)'?: { string: object },
+}
+
 export interface AlphavantageService {
   // this is where you define the Node.js methods that will be
   // mapped to REST/SOAP/gRPC operations as stated in the datasource
   // json file.
-  getTimeSeriesStock(function_choice: string, symbol: string, interval: string): Promise<object>;
-  lookForSymbol(function_choice: string, keywords: string): Promise<object>;
+  getTimeSeriesStock(function_choice: string, symbol: string, interval: string): Promise<ITimeSeriesStock>;
+  lookForSymbol(function_choice: string, keywords: string): Promise<ISymbol>;
 }
 
 export class AlphavantageServiceProvider implements Provider<AlphavantageService> {
